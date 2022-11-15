@@ -4,6 +4,7 @@ interface Iinput {
   setValue: React.Dispatch<React.SetStateAction<string>>;
   placeholder?: string;
   required?: boolean;
+  maxLength?: number;
 }
 
 const Input = ({
@@ -12,6 +13,7 @@ const Input = ({
   value,
   required = true,
   setValue,
+  maxLength,
 }: Iinput) => {
   return (
     <>
@@ -29,6 +31,7 @@ const Input = ({
         value={value}
         onChange={(e) => setValue(e.target.value)}
         required={required}
+        maxLength={maxLength || 255}
       />
     </>
   );
