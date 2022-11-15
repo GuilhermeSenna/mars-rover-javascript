@@ -28,12 +28,12 @@ export default function Home() {
     e.preventDefault();
 
     // Get positions values
-    const positionInfo = initialPosition.split(" ");
+    const [xPosition, yPosition, direction] = initialPosition.split(" ");
 
     setCurrentPosition({
-      xPosition: Number(positionInfo[0]),
-      yPosition: Number(positionInfo[1]),
-      direction: positionInfo[2],
+      xPosition: Number(xPosition),
+      yPosition: Number(yPosition),
+      direction: direction,
     });
 
     setHandleAction((prevValue) => prevValue + 1);
