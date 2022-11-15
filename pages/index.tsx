@@ -1,10 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import Head from "next/head";
 import React, { useState, useEffect } from "react";
 import Input from "./components/input";
+import { goForward } from "./services/goFoward";
+import { handleInstructions } from "./services/handleInstructions";
+import { turnLeft } from "./services/turnLeft";
+import { turnRight } from "./services/turnRight";
 
 // type possibleDirections = "N" | "W" | "S" | "E";
-interface IcurrentPosition {
+export interface IcurrentPosition {
   xPosition: number;
   yPosition: number;
   direction: string;
@@ -19,7 +22,7 @@ export default function Home() {
   });
   const [initialPosition, setInitialPosition] = useState<string>("");
   const [instructions, setInstructions] = useState<string>("");
-  const [changeInitialValue, setChangeInitialValue] = useState<boolean>(false);
+  const [handleAction, setHandleAction] = useState<number>(0);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -33,72 +36,17 @@ export default function Home() {
       direction: positionInfo[2],
     });
 
-    setChangeInitialValue(true);
-  };
-
-  const turnLeft = (actualDirection: string): string => {
-    if (actualDirection === "N") return "W";
-    if (actualDirection === "W") return "S";
-    if (actualDirection === "S") return "E";
-    if (actualDirection === "E") return "N";
-    return "";
-  };
-
-  const turnRight = (actualDirection: string): string => {
-    if (actualDirection === "N") return "E";
-    if (actualDirection === "E") return "S";
-    if (actualDirection === "S") return "W";
-    if (actualDirection === "W") return "N";
-    return "";
-  };
-
-  const goForward = ({
-    xPosition,
-    yPosition,
-    direction,
-  }: IcurrentPosition): { xPosition: number; yPosition: number } => {
-    if (direction === "N") return { xPosition, yPosition: yPosition + 1 };
-    if (direction === "E") return { xPosition: xPosition + 1, yPosition };
-    if (direction === "S") return { xPosition, yPosition: yPosition - 1 };
-    if (direction === "W") return { xPosition: xPosition - 1, yPosition };
-    return { xPosition: 0, yPosition: 0 };
-  };
-
-  const handleInstructions = () => {
-    var actualDirection = currentPosition.direction;
-    var actualPosition = {
-      xPosition: currentPosition.xPosition,
-      yPosition: currentPosition.yPosition,
-    };
-
-    instructions.split("").map((instruction) => {
-      if (instruction === "L") {
-        actualDirection = turnLeft(actualDirection);
-      }
-
-      if (instruction === "R") {
-        actualDirection = turnRight(actualDirection);
-      }
-      if (instruction === "M") {
-        actualPosition = goForward({
-          ...actualPosition,
-          direction: actualDirection,
-        });
-      }
-    });
-
-    setCurrentPosition({
-      xPosition: actualPosition.xPosition,
-      yPosition: actualPosition.yPosition,
-      direction: actualDirection,
-    });
+    setHandleAction((prevValue) => prevValue + 1);
   };
 
   useEffect(() => {
-    if (!changeInitialValue) return;
-    handleInstructions();
-    setChangeInitialValue(false);
-  }, [changeInitialValue]);
+    if (!handleAction) return;
+    handleInstructions({
+      currentPosition,
+      instructions,
+      setCurrentPosition,
+    });
+  }, [handleAction]);
 
   return (
     <main className="pt-10 bg-slate-600 h-screen xl:px-80 lg:px-60 md:px-40 sm:px-20">
